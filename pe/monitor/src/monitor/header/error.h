@@ -1,0 +1,30 @@
+/*
+	$ Monitor Module   (C) 2005-2014 MF
+	$ error.h
+*/
+
+#ifndef _MODULE_ERROR_H_
+#define _MODULE_ERROR_H_
+
+
+
+#define MM_ERROR_SUCCEED			0x00
+
+
+#define MM_ERROR_CONSOLE			0x01
+#define MM_ERROR_THREAD				0x02
+
+
+#define MM_ERROR_HANDLER_UNKNOWN				0x1000
+#define MM_ERROR_HANDLER_DLL					0x1001
+#define MM_ERROR_HANDLER_PHP					0x1002
+
+
+#define MM_ERROR_FUNCTION_CREATEFILEW			0x2000
+#define MM_ERROR_FUNCTION_LOADLIBRARYEXW		0x2001
+#define MM_ERROR_FUNCTION_CREATEPROCESSW		0x2002
+
+
+
+
+#endif   /* ERROR */

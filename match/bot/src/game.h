@@ -1,0 +1,95 @@
+/*
+	$ Robot for LinLink   (C) 2005-2013 MF
+	$ game.h
+*/
+
+#ifndef _GAME_H_
+#define _GAME_H_
+
+
+/* 坐标 */
+extern int x1, y1;
+extern int x2, y2;
+
+/* 点击屏幕后是否发送同步信号 */
+extern int bpclick;
+
+
+/* 进程名 */
+#define GAME_PROCESS			"LinLink5.exe"
+
+
+/* 鼠标位置 */
+#define GAME_HINT_X				560
+#define GAME_HINT_Y				585
+#define GAME_LIFE_X				505
+#define GAME_LIFE_Y				585
+
+
+/* 图标大小地址 */
+#define GAME_ICON_W				0x4C0C70
+#define GAME_ICON_H				0x4C0C74
+
+
+/* 0x4227C1		MOV ESI, ECX */
+#define GAME_CLICK_ADDR			0x4227C1
+#define GAME_CLICK_SIZE			GAME_CLICK_ADDR, 2
+#define GAME_CLICK_DATA			GAME_CLICK_SIZE, 0x8B, 0xF1
+
+
+/* 0x416791 */
+#define GAME_HINT_1_ADDR		0x416791
+#define GAME_HINT_1_SIZE		GAME_HINT_1_ADDR, 2
+#define GAME_HINT_1_DATA		GAME_HINT_1_SIZE, 0x74, 0x1F
+/* 0x4167A0 */
+#define GAME_HINT_2_ADDR		0x4167A0
+#define GAME_HINT_2_SIZE		GAME_HINT_2_ADDR, 2
+#define GAME_HINT_2_DATA		GAME_HINT_2_SIZE, 0x7E, 0x10
+/* 0x4167A5 */
+#define GAME_HINT_3_ADDR		0x4167A5
+#define GAME_HINT_3_SIZE		GAME_HINT_3_ADDR, 4
+#define GAME_HINT_3_DATA		GAME_HINT_3_SIZE, 0x89, 0x44, 0x32, 0x38
+/* 0x4230F8 */
+#define GAME_HINT_4_ADDR		0x4230F8
+#define GAME_HINT_4_SIZE		GAME_HINT_4_ADDR, 6
+#define GAME_HINT_4_DATA		GAME_HINT_4_SIZE, 0x89, 0x87, 0x14, 0x3F, 0x00, 0x00
+
+/* 0x425021		XOR EAX, EAX */
+#define GAME_HINT_F_ADDR		0x425021
+#define GAME_HINT_F_SIZE		GAME_HINT_F_ADDR, 2
+#define GAME_HINT_F_DATA		GAME_HINT_F_SIZE, 0x33, 0xC0
+/* 0x42502D		MOV EAX, EBX */
+#define GAME_HINT_S_ADDR		0x42502D
+#define GAME_HINT_S_SIZE		GAME_HINT_S_ADDR, 2
+#define GAME_HINT_S_DATA		GAME_HINT_S_SIZE, 0x8B, 0xC3
+
+
+/* 0x416745 */
+#define GAME_LIFE_1_ADDR		0x416745
+#define GAME_LIFE_1_SIZE		GAME_LIFE_1_ADDR, 2
+#define GAME_LIFE_1_DATA		GAME_LIFE_1_SIZE, 0x74, 0x30
+/* 0x416754 */
+#define GAME_LIFE_2_ADDR		0x416754
+#define GAME_LIFE_2_SIZE		GAME_LIFE_2_ADDR, 2
+#define GAME_LIFE_2_DATA		GAME_LIFE_2_SIZE, 0x7E, 0x10
+/* 0x416759 */
+#define GAME_LIFE_3_ADDR		0x416759
+#define GAME_LIFE_3_SIZE		GAME_LIFE_3_ADDR, 4
+#define GAME_LIFE_3_DATA		GAME_LIFE_3_SIZE, 0x89, 0x44, 0x1A, 0x3C
+/* 0x422CBA */
+#define GAME_LIFE_4_ADDR		0x422CBA
+#define GAME_LIFE_4_SIZE		GAME_LIFE_4_ADDR, 6
+#define GAME_LIFE_4_DATA		GAME_LIFE_4_SIZE, 0x89, 0x86, 0x10, 0x3F, 0x00, 0x00
+
+
+/* 0x4213B6		MOV ECX, ESP */
+#define GAME_PASS_1_ADDR		0x4213B6
+#define GAME_PASS_1_SIZE		GAME_PASS_1_ADDR, 2
+#define GAME_PASS_1_DATA		GAME_PASS_1_SIZE, 0x8B, 0xCC
+/* 0x4213D1		MOV ECX, ESP */
+#define GAME_PASS_2_ADDR		0x4213D1
+#define GAME_PASS_2_SIZE		GAME_PASS_2_ADDR, 2
+#define GAME_PASS_2_DATA		GAME_PASS_2_SIZE, 0x8B, 0xCC
+
+
+#endif   /* _GAME_H_ */

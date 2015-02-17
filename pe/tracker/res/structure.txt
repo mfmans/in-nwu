@@ -1,0 +1,173 @@
+== export ==========================================================================================
+
+	tracker_remote ---------------------------------------------------------------------------------
+		CHECK WHETHER INSTALLED
+
+		WRITE [address of	tracker.dll path]
+		WRITE [address of	controller	path]
+
+		CREATE REMOTE THREAD
+			FOR LOADING [tracker.dll]
+			AND GETTING FUNCTION [tracker_install]
+			AND CALLING FUNCTION [tracker_install] WITH ARG:
+				[base address of block]
+			AND UNLOADING [tracker.dll]
+
+		GET [context]
+
+		PUSH [context.Eip]			TO [context stack]
+		PUSH [address of jumper]	TO [context stack]
+
+		SET [Context.Eip] IN CONTEXT TO [loader]
+
+
+
+	tracker_install --------------------------------------------------------------------------------
+		BUILD ALL STRUCTURE
+
+		RETURN [loader]
+
+
+
+
+== memory ==========================================================================================
+
+	0000H ------------------------------------------------------------------------------------------
+		00	address of	tracker.dll	path		; tracker.dll 完整路径
+		04	address of	controller	path		; 控制器动态链接库完整路径
+		08	
+		0C	
+		10	address of	jumper					; WoW64 系统调用转发器, FS:[0xC0] 指向的地
+		14	
+		18	
+		1C	
+		20	address of	injector				; 注入器, 调用 ResumeThread() 恢复线程时被调用
+		24	address of	injector_local			; 本地注入器, 由注入器恢复本地线程时被调用
+		28	address of	injector_remote			; 远程注入器, 由注入器恢复远程线程时被调用
+		2C	
+		30	address of	loader					; 线程启动器, 每次线程被恢复时在线程内执行
+
+	0100H ------------------------------------------------------------------------------------------
+		00	LoadLibraryA
+		04	FreeLibrary
+		08	GetProcAddress
+		0C	
+		10	SuspendThread
+		14	ResumeThread
+		18	GetThreadContext
+		1C	SetThreadContext
+		20	TerminateThread
+		24	GetThreadId
+		28	GetProcessIdOfThread
+		2C	
+		30	TerminateProcess
+		34	
+		38	
+		3C	
+
+	0200H ------------------------------------------------------------------------------------------
+		STRUCT
+			00	breakpoint						; 触发断点的系统调用返回地址
+			04	handler							; 处理函数地址
+			08	callback						; 控制器回调函数地址
+		REP STRUCT
+
+
+
+	0300H ------------------------------------------------------------------------------------------
+		handler of	ZwCreateThreadEx
+				IF [suspended flag] NEQ [0]
+					RETURN [1]
+				ENDIF
+
+				CALL SYSCALL
+
+				RESUME THREAD
+
+
+		handler of	ZwResumeThread
+				CALL injector
+
+		handler of	ZwCreateUserFile
+				CALL callback
+
+		handler of	ZwOpenFile
+				CALL callback
+
+		handler of	ZwCreateFile
+				CALL callback
+
+
+
+
+	1000H ------------------------------------------------------------------------------------------
+		jumper  ( )
+				BACKUP CONTEXT
+
+				LOOP [table at 0300H as STRUCT]
+					IF [return address] EQU [STRUCT.breakpoint] THEN
+						CALL [STRUCT.handler] WITH ARG:
+							[STRUCT.callback, argument address, context address]
+
+						IF [STRUCT.handler] RETURN [0] THEN
+							RESUME CONTEXT
+							RETURN
+						ELSE
+							GOTO [:syscall]
+						ENDIF
+					ENDIF
+				REP LOOP UNTIL [STRUCT.breakpoint] NEQ [0]
+
+			[:syscall]
+				RESUME CONTEXT
+				JUMP TO SYSCALL ADDRESS
+
+
+
+	1200H ------------------------------------------------------------------------------------------
+		injector  (thread: HANDLE)
+				IF [thread] IS IN [this process]
+					CALL [injector_local]
+				ELSE
+					CALL [injector_remote]
+				ENDIF
+
+				IF [callee] RETURN [0] THEN
+					TERMINATE [thread]
+					RETURN [0]
+				END
+
+				RETURN [1]
+
+
+
+	1400H ------------------------------------------------------------------------------------------
+		injector_local  (thread: HANDLER)
+				GET [context]
+
+				PUSH [context.Eip]			TO [context stack]
+				PUSH [address of jumper]	TO [context stack]
+
+				SET [Context.Eip] IN CONTEXT TO [loader]
+
+
+
+	1600H ------------------------------------------------------------------------------------------
+		injector_remote  (thread: HANDLER)
+				LOAD [tracker.dll]
+
+				CALL [tracker_remote] WITH ARG:
+					[thread, address of tracker.dll path, address of controller path]
+
+				UNLOAD [tracker.dll]
+
+
+
+	1800H ------------------------------------------------------------------------------------------
+		loader  ( )
+				BACKUP	FS:[0xC0]	TO FS:[0xACC]
+				UPDATE	FS:[0xC0]	AS [address of jumper]
+
+				RET TO [old context.Eip]
+
+

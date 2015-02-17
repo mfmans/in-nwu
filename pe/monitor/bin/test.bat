@@ -1,0 +1,1 @@
+%~dp0\loader.exe @"%~dp0\test.dll" !notepad.exe
